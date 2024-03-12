@@ -22,36 +22,36 @@ namespace bibliotheque.Controllers
 
         // GET: api/Medias
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Medias>>> GetMedias()
+        public async Task<ActionResult<IEnumerable<Media>>> GetMedias()
         {
             return await _context.Medias.ToListAsync();
         }
 
         // GET: api/Medias/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Medias>> GetMedias(int id)
+        public async Task<ActionResult<Media>> GetMedia(int id)
         {
-            var medias = await _context.Medias.FindAsync(id);
+            var media = await _context.Medias.FindAsync(id);
 
-            if (medias == null)
+            if (media == null)
             {
                 return NotFound();
             }
 
-            return medias;
+            return media;
         }
 
         // PUT: api/Medias/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMedias(int id, Medias medias)
+        public async Task<IActionResult> PutMedias(int id, Media media)
         {
-            if (id != medias.Id)
+            if (id != media.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(medias).State = EntityState.Modified;
+            _context.Entry(media).State = EntityState.Modified;
 
             try
             {
@@ -72,28 +72,28 @@ namespace bibliotheque.Controllers
             return NoContent();
         }
 
-        // POST: api/Medias
+        // POST: api/Media
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Medias>> PostMedias(Medias medias)
+        public async Task<ActionResult<Media>> PostMedia(Media media)
         {
-            _context.Medias.Add(medias);
+            _context.Medias.Add(media);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetMedias", new { id = medias.Id }, medias);
+            return CreatedAtAction("GetMedia", new { id = media.Id }, media);
         }
 
-        // DELETE: api/Medias/5
+        // DELETE: api/Media/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMedias(int id)
+        public async Task<IActionResult> DeleteMedia(int id)
         {
-            var medias = await _context.Medias.FindAsync(id);
-            if (medias == null)
+            var media = await _context.Medias.FindAsync(id);
+            if (media == null)
             {
                 return NotFound();
             }
 
-            _context.Medias.Remove(medias);
+            _context.Medias.Remove(media);
             await _context.SaveChangesAsync();
 
             return NoContent();
