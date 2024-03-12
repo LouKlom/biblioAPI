@@ -1,0 +1,105 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\kloms\\Desktop\\apiBilbio\\MYSQLbiblioteque\\bibliotheque\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{D90CDDA6-D608-4A71-9ACF-572C97AAA97F}|bibliotheque\\bibliotheque.csproj|c:\\users\\kloms\\desktop\\apibilbio\\mysqlbiblioteque\\bibliotheque\\bibliotheque\\models\\mediascontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D90CDDA6-D608-4A71-9ACF-572C97AAA97F}|bibliotheque\\bibliotheque.csproj|solutionrelative:bibliotheque\\models\\mediascontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D90CDDA6-D608-4A71-9ACF-572C97AAA97F}|bibliotheque\\bibliotheque.csproj|c:\\users\\kloms\\desktop\\apibilbio\\mysqlbiblioteque\\bibliotheque\\bibliotheque\\models\\reservationcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D90CDDA6-D608-4A71-9ACF-572C97AAA97F}|bibliotheque\\bibliotheque.csproj|solutionrelative:bibliotheque\\models\\reservationcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D90CDDA6-D608-4A71-9ACF-572C97AAA97F}|bibliotheque\\bibliotheque.csproj|c:\\users\\kloms\\desktop\\apibilbio\\mysqlbiblioteque\\bibliotheque\\bibliotheque\\models\\reservation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D90CDDA6-D608-4A71-9ACF-572C97AAA97F}|bibliotheque\\bibliotheque.csproj|solutionrelative:bibliotheque\\models\\reservation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D90CDDA6-D608-4A71-9ACF-572C97AAA97F}|bibliotheque\\bibliotheque.csproj|c:\\users\\kloms\\desktop\\apibilbio\\mysqlbiblioteque\\bibliotheque\\bibliotheque\\models\\medias.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D90CDDA6-D608-4A71-9ACF-572C97AAA97F}|bibliotheque\\bibliotheque.csproj|solutionrelative:bibliotheque\\models\\medias.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D90CDDA6-D608-4A71-9ACF-572C97AAA97F}|bibliotheque\\bibliotheque.csproj|c:\\users\\kloms\\desktop\\apibilbio\\mysqlbiblioteque\\bibliotheque\\bibliotheque\\controllers\\reservationscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D90CDDA6-D608-4A71-9ACF-572C97AAA97F}|bibliotheque\\bibliotheque.csproj|solutionrelative:bibliotheque\\controllers\\reservationscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MediasContext.cs",
+              "DocumentMoniker": "C:\\Users\\kloms\\Desktop\\apiBilbio\\MYSQLbiblioteque\\bibliotheque\\bibliotheque\\Models\\MediasContext.cs",
+              "RelativeDocumentMoniker": "bibliotheque\\Models\\MediasContext.cs",
+              "ToolTip": "C:\\Users\\kloms\\Desktop\\apiBilbio\\MYSQLbiblioteque\\bibliotheque\\bibliotheque\\Models\\MediasContext.cs",
+              "RelativeToolTip": "bibliotheque\\Models\\MediasContext.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-08T19:09:04.934Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ReservationContext.cs",
+              "DocumentMoniker": "C:\\Users\\kloms\\Desktop\\apiBilbio\\MYSQLbiblioteque\\bibliotheque\\bibliotheque\\Models\\ReservationContext.cs",
+              "RelativeDocumentMoniker": "bibliotheque\\Models\\ReservationContext.cs",
+              "ToolTip": "C:\\Users\\kloms\\Desktop\\apiBilbio\\MYSQLbiblioteque\\bibliotheque\\bibliotheque\\Models\\ReservationContext.cs",
+              "RelativeToolTip": "bibliotheque\\Models\\ReservationContext.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-08T19:08:51.811Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Medias.cs",
+              "DocumentMoniker": "C:\\Users\\kloms\\Desktop\\apiBilbio\\MYSQLbiblioteque\\bibliotheque\\bibliotheque\\Models\\Medias.cs",
+              "RelativeDocumentMoniker": "bibliotheque\\Models\\Medias.cs",
+              "ToolTip": "C:\\Users\\kloms\\Desktop\\apiBilbio\\MYSQLbiblioteque\\bibliotheque\\bibliotheque\\Models\\Medias.cs",
+              "RelativeToolTip": "bibliotheque\\Models\\Medias.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-08T19:08:34.155Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Reservation.cs",
+              "DocumentMoniker": "C:\\Users\\kloms\\Desktop\\apiBilbio\\MYSQLbiblioteque\\bibliotheque\\bibliotheque\\Models\\Reservation.cs",
+              "RelativeDocumentMoniker": "bibliotheque\\Models\\Reservation.cs",
+              "ToolTip": "C:\\Users\\kloms\\Desktop\\apiBilbio\\MYSQLbiblioteque\\bibliotheque\\bibliotheque\\Models\\Reservation.cs",
+              "RelativeToolTip": "bibliotheque\\Models\\Reservation.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-08T19:08:23.193Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ReservationsController.cs",
+              "DocumentMoniker": "C:\\Users\\kloms\\Desktop\\apiBilbio\\MYSQLbiblioteque\\bibliotheque\\bibliotheque\\Controllers\\ReservationsController.cs",
+              "RelativeDocumentMoniker": "bibliotheque\\Controllers\\ReservationsController.cs",
+              "ToolTip": "C:\\Users\\kloms\\Desktop\\apiBilbio\\MYSQLbiblioteque\\bibliotheque\\bibliotheque\\Controllers\\ReservationsController.cs",
+              "RelativeToolTip": "bibliotheque\\Controllers\\ReservationsController.cs",
+              "ViewState": "AQIAAC8AAAAAAAAAAAAIwFQAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-08T19:04:30.998Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
