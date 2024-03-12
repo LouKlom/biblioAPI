@@ -13,9 +13,9 @@ namespace bibliotheque.Controllers
     [ApiController]
     public class MediasController : ControllerBase
     {
-        private readonly MediasContext _context;
+        private readonly ApiContext _context;
 
-        public MediasController(MediasContext context)
+        public MediasController(ApiContext context)
         {
             _context = context;
         }

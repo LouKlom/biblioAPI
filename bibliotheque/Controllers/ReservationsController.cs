@@ -13,9 +13,9 @@ namespace bibliotheque.Controllers
     [ApiController]
     public class ReservationsController : ControllerBase
     {
-        private readonly ReservationContext _context;
+        private readonly ApiContext _context;
 
-        public ReservationsController(ReservationContext context)
+        public ReservationsController(ApiContext context)
         {
             _context = context;
         }
@@ -24,14 +24,14 @@ namespace bibliotheque.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetReservation()
         {
-            return await _context.Reservation.ToListAsync();
+            return await _context.Reservations.ToListAsync();
         }
 
         // GET: api/Reservations/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Reservation>> GetReservation(int id)
         {
-            var reservation = await _context.Reservation.FindAsync(id);
+            var reservation = await _context.Reservations.FindAsync(id);
 
             if (reservation == null)
             {
@@ -77,7 +77,7 @@ namespace bibliotheque.Controllers
         [HttpPost]
         public async Task<ActionResult<Reservation>> PostReservation(Reservation reservation)
         {
-            _context.Reservation.Add(reservation);
+            _context.Reservations.Add(reservation);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetReservation", new { id = reservation.Id }, reservation);
@@ -87,13 +87,13 @@ namespace bibliotheque.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteReservation(int id)
         {
-            var reservation = await _context.Reservation.FindAsync(id);
+            var reservation = await _context.Reservations.FindAsync(id);
             if (reservation == null)
             {
                 return NotFound();
             }
 
-            _context.Reservation.Remove(reservation);
+            _context.Reservations.Remove(reservation);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -101,7 +101,7 @@ namespace bibliotheque.Controllers
 
         private bool ReservationExists(int id)
         {
-            return _context.Reservation.Any(e => e.Id == id);
+            return _context.Reservations.Any(e => e.Id == id);
         }
     }
 }

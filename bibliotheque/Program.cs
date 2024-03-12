@@ -8,13 +8,7 @@ IConfiguration configuration = builder.Configuration;
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddDbContext<ClientContext>(opt =>
-    opt.UseMySQL(configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddDbContext<AuteurContext>(opt =>
-    opt.UseMySQL(configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddDbContext<MediasContext>(opt =>
-    opt.UseMySQL(configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddDbContext<ReservationContext>(opt =>
+builder.Services.AddDbContext<ApiContext>(opt =>
     opt.UseMySQL(configuration.GetConnectionString("DefaultConnection")));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

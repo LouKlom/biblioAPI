@@ -13,9 +13,9 @@ namespace bibliotheque.Controllers
     [ApiController]
     public class AuteursController : ControllerBase
     {
-        private readonly AuteurContext _context;
+        private readonly ApiContext _context;
 
-        public AuteursController(AuteurContext context)
+        public AuteursController(ApiContext context)
         {
             _context = context;
         }
@@ -24,14 +24,14 @@ namespace bibliotheque.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Auteur>>> GetAuteur()
         {
-            return await _context.Auteur.ToListAsync();
+            return await _context.Auteurs.ToListAsync();
         }
 
         // GET: api/Auteurs/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Auteur>> GetAuteur(int id)
         {
-            var auteur = await _context.Auteur.FindAsync(id);
+            var auteur = await _context.Auteurs.FindAsync(id);
 
             if (auteur == null)
             {
@@ -77,7 +77,7 @@ namespace bibliotheque.Controllers
         [HttpPost]
         public async Task<ActionResult<Auteur>> PostAuteur(Auteur auteur)
         {
-            _context.Auteur.Add(auteur);
+            _context.Auteurs.Add(auteur);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetAuteur", new { id = auteur.Id }, auteur);
@@ -87,13 +87,13 @@ namespace bibliotheque.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAuteur(int id)
         {
-            var auteur = await _context.Auteur.FindAsync(id);
+            var auteur = await _context.Auteurs.FindAsync(id);
             if (auteur == null)
             {
                 return NotFound();
             }
 
-            _context.Auteur.Remove(auteur);
+            _context.Auteurs.Remove(auteur);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -101,7 +101,7 @@ namespace bibliotheque.Controllers
 
         private bool AuteurExists(int id)
         {
-            return _context.Auteur.Any(e => e.Id == id);
+            return _context.Auteurs.Any(e => e.Id == id);
         }
     }
 }
