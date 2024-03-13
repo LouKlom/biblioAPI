@@ -11,8 +11,14 @@ IConfiguration configuration = builder.Configuration;
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddDbContext<ApiContext>(opt =>
-    opt.UseMySQL(configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<ApiContext>(opts =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    opts.UseMySql(connectionString,
+        ServerVersion.AutoDetect(connectionString),
+
+        opts => opts.MigrationsAssembly(typeof(ApiContext).Assembly.FullName));
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
