@@ -9,56 +9,61 @@ public static class ClientEndpoints
 {
     public static void MapClient(this IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/Clients", async (ApiContext context) => await context.Clients.ToListAsync());
-        
-        app.MapGet("/api/Clients/{id}", async (ApiContext context, int id) =>
-        {
-            var client = await context.Clients.FindAsync(id);
-            if (client == null)
-            {
-                return Results.NotFound();
-            }
+        app.MapGet("/api/Clients", async (ApiContext context) => await context.Clients.ToListAsync())
+            .WithTags("GetClients");
 
-            return Results.Ok(client);
-        });
+        app.MapGet("/api/Clients/{id}", async (ApiContext context, int id) =>
+            {
+                var client = await context.Clients.FindAsync(id);
+                if (client == null)
+                {
+                    return Results.NotFound();
+                }
+
+                return Results.Ok(client);
+            })
+            .WithTags("GetClientById");
 
         app.MapPut("/api/Clients/{id}", async (ApiContext context, int id, Client client) =>
-        {
-            if (id != client.Id)
             {
-                return Results.BadRequest();
-            }
-            
-            context.Entry(client).State = EntityState.Modified;
-            
-            if (ClientExists(context, id))
-            {
-                await context.SaveChangesAsync();
-                return Results.NoContent();
-            }
+                if (id != client.Id)
+                {
+                    return Results.BadRequest();
+                }
 
-            return Results.NotFound();
-        });
+                context.Entry(client).State = EntityState.Modified;
+
+                if (ClientExists(context, id))
+                {
+                    await context.SaveChangesAsync();
+                    return Results.NoContent();
+                }
+
+                return Results.NotFound();
+            })
+            .WithTags("UpdateClient");
 
         app.MapPost("/api/Clients", async (ApiContext context, Client client) =>
-        {
-            await context.AddAsync(client);
-            return Results.NoContent();
-        });
+            {
+                await context.AddAsync(client);
+                return Results.NoContent();
+            })
+            .WithTags("CreateClient");
 
         app.MapDelete("/api/Clients/{id}", async (ApiContext context, int id) =>
-        {
-            var client = await context.Clients.FindAsync(id);
-            if (client == null)
             {
-                return Results.NotFound();
-            }
-            
-            context.Clients.Remove(client);
-            await context.SaveChangesAsync();
-            
-            return Results.Ok();
-        });
+                var client = await context.Clients.FindAsync(id);
+                if (client == null)
+                {
+                    return Results.NotFound();
+                }
+
+                context.Clients.Remove(client);
+                await context.SaveChangesAsync();
+
+                return Results.Ok();
+            })
+            .WithTags("DeleteClient");
 
         bool ClientExists(ApiContext context, int id)
         {
