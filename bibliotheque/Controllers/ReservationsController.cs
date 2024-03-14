@@ -77,6 +77,18 @@ namespace bibliotheque.Controllers
         [HttpPost]
         public async Task<ActionResult<Reservation>> PostReservation(Reservation reservation)
         {
+            var a = _context.Medias.Where(a => a.Id == reservation.Media.Id).FirstOrDefault();
+            if (a != null)
+            {
+                reservation.Media = a;
+            }
+            
+            var b = _context.Clients.Where(b => b.Id == reservation.Client.Id).FirstOrDefault();
+            if (b != null)
+            {
+                reservation.Client = b;
+            }
+            
             _context.Reservations.Add(reservation);
             await _context.SaveChangesAsync();
 

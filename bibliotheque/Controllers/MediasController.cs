@@ -77,6 +77,11 @@ namespace bibliotheque.Controllers
         [HttpPost]
         public async Task<ActionResult<Media>> PostMedia(Media media)
         {
+            var a = _context.Auteurs.Where(a => a.Id == media.Auteur.Id).FirstOrDefault();
+            if (a != null)
+            {
+                media.Auteur = a;
+            }
             _context.Medias.Add(media);
             await _context.SaveChangesAsync();
 
