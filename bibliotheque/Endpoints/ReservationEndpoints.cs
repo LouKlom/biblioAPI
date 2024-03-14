@@ -1,4 +1,6 @@
 using bibliotheque.Models;
+using bibliotheque.Requests;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace bibliotheque.Endpoints;
@@ -41,21 +43,24 @@ public static class ReservationEndpoints
             })
             .WithTags("Reservations");
 
-        app.MapPost("/api/reservations", async (ApiContext context, Reservation reservation) =>
+        app.MapPost("/api/reservations", async (ApiContext context, ReservationRequest reservation) =>
             {
-                var media = await context.Medias.FirstOrDefaultAsync(x => x.Id == reservation.Media.Id);
+                var media = await context.Medias.FirstOrDefaultAsync(x => x.Id == reservation.MediaId);
                 if (media != null)
                 {
-                    reservation.Media = media;
+                    reservation.MediaId = media.Id;
                 }
 
-                var client = await context.Clients.FirstOrDefaultAsync(x => x.Id == reservation.Client.Id);
+                var client = await context.Clients.FirstOrDefaultAsync(x => x.Id == reservation.ClientId);
                 if (client != null)
                 {
-                    reservation.Client = client;
+                    reservation.ClientId = client.Id;
                 }
 
-                await context.AddAsync(reservation);
+                var reservationToAdd =
+                    new Reservation { Client = client, Media = media, DateDebut = reservation.DateDebut };
+                
+                await context.AddAsync(reservationToAdd);
                 await context.SaveChangesAsync();
                 return Results.NoContent();
             })

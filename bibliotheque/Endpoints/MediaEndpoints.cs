@@ -41,15 +41,25 @@ public static class MediaEndpoints
             })
             .WithTags("Medias");
 
-        app.MapPost("/api/medias", async (ApiContext context, Media media) =>
+        app.MapPost("/api/medias", async (ApiContext context, MediaRequest media) =>
             {
-                var auteur = context.Auteurs.FirstOrDefault(a => a.Id == media.Auteur.Id);
+                var auteur = context.Auteurs.FirstOrDefault(a => a.Id == media.AuteurId);
                 if (auteur != null)
                 {
-                    media.Auteur = auteur;
+                    media.AuteurId = auteur.Id;
                 }
 
-                await context.AddAsync(media);
+                var mediaToAdd = new Media
+                {
+                    Description = media.Description,
+                    Edition = media.Edition,
+                    Name = media.Name,
+                    Reserved = media.Reserved,
+                    DateSortie = media.DateSortie,
+                    Auteur = auteur!
+                };
+
+                await context.AddAsync(mediaToAdd);
                 await context.SaveChangesAsync();
                 return Results.NoContent();
             })

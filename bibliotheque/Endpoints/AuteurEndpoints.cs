@@ -41,9 +41,10 @@ public static class AuteurEndpoints
             })
             .WithTags("Auteurs");
 
-        app.MapPost("/api/Auteurs", async (ApiContext context, Auteur auteur) =>
+        app.MapPost("/api/Auteurs", async (ApiContext context, AuteurRequest auteur) =>
             {
-                await context.AddAsync(auteur);
+                var auteurToAdd = new Auteur { FirstName = auteur.FirstName, LastName = auteur.LastName };
+                await context.AddAsync(auteurToAdd);
                 await context.SaveChangesAsync();
                 return Results.NoContent();
             })

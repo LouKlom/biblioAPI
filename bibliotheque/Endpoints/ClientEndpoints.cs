@@ -41,9 +41,10 @@ public static class ClientEndpoints
             })
             .WithTags("Clients");
 
-        app.MapPost("/api/Clients", async (ApiContext context, Client client) =>
+        app.MapPost("/api/Clients", async (ApiContext context, ClientRequest client) =>
             {
-                await context.AddAsync(client);
+                var clientToAdd = new Client { Name = client.Name, Mail = client.Mail, Phone = client.Phone };
+                await context.AddAsync(clientToAdd);
                 await context.SaveChangesAsync();
                 return Results.NoContent();
             })
