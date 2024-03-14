@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using bibliotheque.Models;
 using System.Configuration;
+using bibliotheque;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,6 +37,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapControllers();
+//app.MapControllers();
+app.MapEndpoint();
 
 app.Run();
