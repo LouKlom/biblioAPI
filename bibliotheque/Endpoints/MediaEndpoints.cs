@@ -50,6 +50,7 @@ public static class MediaEndpoints
                 }
 
                 await context.AddAsync(media);
+                await context.SaveChangesAsync();
                 return Results.NoContent();
             })
             .WithTags("Medias");

@@ -44,6 +44,7 @@ public static class AuteurEndpoints
         app.MapPost("/api/Auteurs", async (ApiContext context, Auteur auteur) =>
             {
                 await context.AddAsync(auteur);
+                await context.SaveChangesAsync();
                 return Results.NoContent();
             })
             .WithTags("Auteurs");

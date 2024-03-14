@@ -56,6 +56,7 @@ public static class ReservationEndpoints
                 }
 
                 await context.AddAsync(reservation);
+                await context.SaveChangesAsync();
                 return Results.NoContent();
             })
             .WithTags("Reservations");
