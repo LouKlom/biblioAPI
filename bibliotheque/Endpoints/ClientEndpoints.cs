@@ -1,6 +1,4 @@
 using bibliotheque.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace bibliotheque.Endpoints;
@@ -10,7 +8,7 @@ public static class ClientEndpoints
     public static void MapClient(this IEndpointRouteBuilder app)
     {
         app.MapGet("/api/Clients", async (ApiContext context) => await context.Clients.ToListAsync())
-            .WithTags("GetClients");
+            .WithTags("Clients");
 
         app.MapGet("/api/Clients/{id}", async (ApiContext context, int id) =>
             {
@@ -22,7 +20,7 @@ public static class ClientEndpoints
 
                 return Results.Ok(client);
             })
-            .WithTags("GetClientById");
+            .WithTags("Clients");
 
         app.MapPut("/api/Clients/{id}", async (ApiContext context, int id, Client client) =>
             {
@@ -41,14 +39,14 @@ public static class ClientEndpoints
 
                 return Results.NotFound();
             })
-            .WithTags("UpdateClient");
+            .WithTags("Clients");
 
         app.MapPost("/api/Clients", async (ApiContext context, Client client) =>
             {
                 await context.AddAsync(client);
                 return Results.NoContent();
             })
-            .WithTags("CreateClient");
+            .WithTags("Clients");
 
         app.MapDelete("/api/Clients/{id}", async (ApiContext context, int id) =>
             {
@@ -63,7 +61,7 @@ public static class ClientEndpoints
 
                 return Results.Ok();
             })
-            .WithTags("DeleteClient");
+            .WithTags("Clients");
 
         bool ClientExists(ApiContext context, int id)
         {
