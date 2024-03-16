@@ -24,6 +24,27 @@ public static class ReservationEndpoints
             })
             .WithTags("Reservations");
 
+        app.MapGet("/api/reservations/client/{clientId}", async (ApiContext context, int clientId) =>
+        {
+            if (ClientExists(context, clientId))
+            {
+                var reservations = await context.Reservations.Where(r => r.Client.Id == clientId).ToListAsync();
+                if (reservations.Count == 0)
+                {
+                    return Results.NoContent();
+                }
+
+                return Results.Ok(reservations);
+            }
+
+            return Results.NotFound();
+        }).WithTags("Reservations");
+
+        app.MapGet("/api/reservations/{dateDebut}/{dateFin}", async (ApiContext context, string dateDebut, string dateFin) =>
+        {
+            var reservations = await context.Reservations.Where(r => r.DateDebut == dateDebut && r.DateDebut == dateFin).ToListAsync(); //Changer le type de DateDebut et DateFin pour rechercher des ranges de date
+        }).WithTags("Reservations");
+
         app.MapPut("/api/reservations/{id}", async (ApiContext context, int id, Reservation reservation) =>
             {
                 if (id != reservation.Id)
@@ -84,6 +105,11 @@ public static class ReservationEndpoints
         bool ReservationExists(ApiContext context, int id)
         {
             return context.Reservations.Any(e => e.Id == id);
+        }
+        
+        bool ClientExists(ApiContext context, int id)
+        {
+            return context.Clients.Any(e => e.Id == id);
         }
     } 
 }

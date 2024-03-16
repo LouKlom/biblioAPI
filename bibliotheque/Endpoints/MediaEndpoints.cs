@@ -1,4 +1,5 @@
 using bibliotheque.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace bibliotheque.Endpoints;
@@ -21,6 +22,22 @@ public static class MediaEndpoints
                 return Results.Ok(media);
             })
             .WithTags("Medias");
+
+        app.MapGet("/api/medias/auteur/{auteurId}", async (ApiContext context, int auteurId) =>
+        {
+            if (AuteurExists(context, auteurId))
+            {
+                var medias = await context.Medias.Where(m => m.Auteur.Id == auteurId).ToListAsync();
+                if (medias.Count == 0)
+                {
+                    return Results.NoContent();
+                }
+
+                return Results.Ok(medias);
+            }
+
+            return Results.NotFound();
+        }).WithTags("Medias");
 
         app.MapPut("/api/medias/{id}", async (ApiContext context, int id, Media media) =>
             {
@@ -83,6 +100,11 @@ public static class MediaEndpoints
         bool MediaExists(ApiContext context, int id)
         {
             return context.Medias.Any(e => e.Id == id);
+        }
+        
+        bool AuteurExists(ApiContext context, int id)
+        {
+            return context.Auteurs.Any(e => e.Id == id);
         }
     } 
 }

@@ -6,5 +6,6 @@
         public Client? Client { get; set; }
         public Media? Media { get; set; }
         public string? DateDebut { get; set; }
+        public string? DateFin { get; set; }
     }
 }
