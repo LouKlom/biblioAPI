@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using bibliotheque.Models;
 
@@ -11,9 +12,11 @@ using bibliotheque.Models;
 namespace bibliotheque.Migrations
 {
     [DbContext(typeof(ApiContext))]
-    partial class ApiContextModelSnapshot : ModelSnapshot
+    [Migration("20240318171545_ReservationDate")]
+    partial class ReservationDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -75,8 +78,9 @@ namespace bibliotheque.Migrations
                     b.Property<int>("AuteurId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DateSortie")
-                        .HasColumnType("datetime(6)");
+                    b.Property<string>("DateSortie")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -108,16 +112,16 @@ namespace bibliotheque.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ClientId")
+                    b.Property<int?>("ClientId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("DateDebut")
+                    b.Property<DateTime?>("DateDebut")
                         .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("DateFin")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("MediaId")
+                    b.Property<int?>("MediaId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -144,15 +148,11 @@ namespace bibliotheque.Migrations
                 {
                     b.HasOne("bibliotheque.Models.Client", "Client")
                         .WithMany()
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ClientId");
 
                     b.HasOne("bibliotheque.Models.Media", "Media")
                         .WithMany()
-                        .HasForeignKey("MediaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MediaId");
 
                     b.Navigation("Client");
 

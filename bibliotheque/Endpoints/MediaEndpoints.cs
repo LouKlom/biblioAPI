@@ -8,9 +8,11 @@ public static class MediaEndpoints
 {
     public static void MapMedia(this IEndpointRouteBuilder app)
     {
+        //Get All Media
         app.MapGet("/api/medias", async (ApiContext context) => await context.Medias.ToListAsync())
             .WithTags("Medias");
 
+        //Get Media by id
         app.MapGet("/api/medias/{id}", async (ApiContext context, int id) =>
             {
                 var media = await context.Medias.FindAsync(id);
@@ -23,6 +25,7 @@ public static class MediaEndpoints
             })
             .WithTags("Medias");
 
+        //Get Media by Auteur
         app.MapGet("/api/medias/auteur/{auteurId}", async (ApiContext context, int auteurId) =>
         {
             if (AuteurExists(context, auteurId))
@@ -39,6 +42,7 @@ public static class MediaEndpoints
             return Results.NotFound();
         }).WithTags("Medias");
 
+        //Update Media by Id 
         app.MapPut("/api/medias/{id}", async (ApiContext context, int id, Media media) =>
             {
                 if (id != media.Id)
@@ -58,30 +62,32 @@ public static class MediaEndpoints
             })
             .WithTags("Medias");
 
+        //Add Media
         app.MapPost("/api/medias", async (ApiContext context, MediaRequest media) =>
             {
+                //On verifie que l'auteur existe
                 var auteur = context.Auteurs.FirstOrDefault(a => a.Id == media.AuteurId);
                 if (auteur != null)
                 {
                     media.AuteurId = auteur.Id;
+                    var mediaToAdd = new Media
+                    {
+                        Description = media.Description,
+                        Edition = media.Edition,
+                        Name = media.Name,
+                        Reserved = media.Reserved.Value,
+                        Auteur = auteur
+                    };
+                    
+                    await context.AddAsync(mediaToAdd);
+                    await context.SaveChangesAsync();
+                    return Results.NoContent();
                 }
-
-                var mediaToAdd = new Media
-                {
-                    Description = media.Description,
-                    Edition = media.Edition,
-                    Name = media.Name,
-                    Reserved = media.Reserved,
-                    DateSortie = media.DateSortie,
-                    Auteur = auteur!
-                };
-
-                await context.AddAsync(mediaToAdd);
-                await context.SaveChangesAsync();
-                return Results.NoContent();
+                return Results.NotFound();
             })
             .WithTags("Medias");
 
+        //Delete Media by Id
         app.MapDelete("/api/medias/{id}", async (ApiContext context, int id) =>
             {
                 var media = await context.Medias.FindAsync(id);

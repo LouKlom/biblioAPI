@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using bibliotheque.Models;
 
@@ -11,9 +12,11 @@ using bibliotheque.Models;
 namespace bibliotheque.Migrations
 {
     [DbContext(typeof(ApiContext))]
-    partial class ApiContextModelSnapshot : ModelSnapshot
+    [Migration("20240318185937_FixReservation")]
+    partial class FixReservation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -114,7 +117,7 @@ namespace bibliotheque.Migrations
                     b.Property<DateTime>("DateDebut")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<DateTime?>("DateFin")
+                    b.Property<DateTime>("DateFin")
                         .HasColumnType("datetime(6)");
 
                     b.Property<int>("MediaId")

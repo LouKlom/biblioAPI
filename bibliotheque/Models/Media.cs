@@ -7,8 +7,7 @@
         public string Description { get; set; }
         public bool Reserved { get; set; }
         public string Edition {  get; set; }
-        public string DateSortie { get; set; }
+        public DateTime? DateSortie { get; set; }
         public Auteur Auteur { get; set; }
-
     }
 }
