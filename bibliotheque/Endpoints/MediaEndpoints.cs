@@ -9,13 +9,21 @@ public static class MediaEndpoints
     public static void MapMedia(this IEndpointRouteBuilder app)
     {
         //Get All Media
-        app.MapGet("/api/medias", async (ApiContext context) => await context.Medias.ToListAsync())
+        app.MapGet("/api/medias", async (ApiContext context) =>
+            {
+                return await context.Medias
+                    .Include(m => m.Auteur)
+                    .ToListAsync();
+            })
             .WithTags("Medias");
 
         //Get Media by id
         app.MapGet("/api/medias/{id}", async (ApiContext context, int id) =>
             {
-                var media = await context.Medias.FindAsync(id);
+                var media = await context.Medias
+                    .Include(m => m.Auteur)
+                    .FirstOrDefaultAsync();
+                
                 if (media == null)
                 {
                     return Results.NotFound();
@@ -30,7 +38,10 @@ public static class MediaEndpoints
         {
             if (AuteurExists(context, auteurId))
             {
-                var medias = await context.Medias.Where(m => m.Auteur.Id == auteurId).ToListAsync();
+                var medias = await context.Medias
+                    .Include(m => m.Auteur)
+                    .Where(m => m.Auteur.Id == auteurId).ToListAsync();
+                
                 if (medias.Count == 0)
                 {
                     return Results.NoContent();

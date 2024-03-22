@@ -12,13 +12,22 @@ public static class ReservationEndpoints
     public static void MapReservation(this IEndpointRouteBuilder app)
     {
         //Get All Reservations
-        app.MapGet("/api/reservations", async (ApiContext context) => await context.Reservations.ToListAsync())
+        app.MapGet("/api/reservations", async (ApiContext context) => await context.Reservations
+                .Include(r => r.Client)
+                .Include(r => r.Media)
+                .Include(r => r.Media.Auteur)
+                .ToListAsync())
             .WithTags("Reservations");
 
         //Get Reservation by Id
         app.MapGet("/api/reservations/{id}", async (ApiContext context, int id) =>
             {
-                var reservation = await context.Reservations.FindAsync(id);
+                var reservation = await context.Reservations
+                    .Include(r => r.Client)
+                    .Include(r => r.Media)
+                    .Include(r => r.Media.Auteur)
+                    .FirstOrDefaultAsync();
+                
                 if (reservation == null)
                 {
                     return Results.NotFound();
@@ -33,7 +42,12 @@ public static class ReservationEndpoints
         {
             if (ClientExists(context, clientId))
             {
-                var reservations = await context.Reservations.Where(r => r.Client.Id == clientId).ToListAsync();
+                var reservations = await context.Reservations
+                    .Include(r => r.Client)
+                    .Include(r => r.Media)
+                    .Include(r => r.Media.Auteur)
+                    .Where(r => r.Client.Id == clientId).ToListAsync();
+                
                 if (reservations.Count == 0)
                 {
                     return Results.NotFound();
@@ -47,7 +61,11 @@ public static class ReservationEndpoints
         //Get Reservation by Date
         app.MapGet("/api/reservations/{dateDebut}/{dateFin}", async (ApiContext context, DateTime dateDebut, DateTime dateFin) =>
         {
-            var reservations = await context.Reservations.Where(r => r.DateDebut >= dateDebut && r.DateDebut <= dateFin).ToListAsync();
+            var reservations = await context.Reservations
+                .Include(r => r.Client)
+                .Include(r => r.Media)
+                .Include(r => r.Media.Auteur)
+                .Where(r => r.DateDebut >= dateDebut && r.DateDebut <= dateFin).ToListAsync();
             return Results.Ok(reservations);
         }).WithTags("Reservations");
 
