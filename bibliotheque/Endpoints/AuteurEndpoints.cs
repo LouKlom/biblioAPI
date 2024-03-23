@@ -1,5 +1,4 @@
 using bibliotheque.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using static Microsoft.AspNetCore.Http.TypedResults;
 
@@ -50,7 +49,7 @@ public static class AuteurEndpoints
 
         context.Entry(auteur).State = EntityState.Modified;
 
-        if (AuteurExists(context, id))
+        if (await AuteurExists(context, id))
         {
             await context.SaveChangesAsync();
             return Results.NoContent();
@@ -81,8 +80,8 @@ public static class AuteurEndpoints
         return Results.Ok();
     }
     
-    private static bool AuteurExists(ApiContext context, int id)
+    private static async Task<bool> AuteurExists(ApiContext context, int id)
     {
-        return context.Auteurs.Any(e => e.Id == id);
+        return await context.Auteurs.AnyAsync(e => e.Id == id);
     }
 } 

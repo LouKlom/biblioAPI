@@ -8,6 +8,13 @@ public class ApiContext : DbContext
         : base(options)
     {
     }
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Client>()
+            .HasIndex(p => new { p.Name, p.Mail })
+            .IsUnique(true);
+    }
 
     public DbSet<Auteur> Auteurs { get; set; } = null!;
     public DbSet<Client> Clients { get; set; } = null!;

@@ -1,4 +1,7 @@
-﻿namespace bibliotheque.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+namespace bibliotheque.Models
 {
     public class Client
     {
