@@ -15,7 +15,7 @@ public static class AuteurEndpoints
         app.MapGet("/api/Auteurs/{id}", GetAuteurById)
             .WithTags("Auteurs");
 
-        app.MapPut("/api/Auteurs/{id}", PutAuteur)
+        app.MapPut("/api/Auteurs/{id}", UpdateAuteur)
             .WithTags("Auteurs");
 
         app.MapPost("/api/Auteurs", CreateAuteur)
@@ -38,7 +38,7 @@ public static class AuteurEndpoints
             : NotFound();
     }
 
-    private static async Task<IResult> PutAuteur(ApiContext context, int id, AuteurRequest request)
+    private static async Task<IResult> UpdateAuteur(ApiContext context, int id, AuteurRequest request)
     {
         var auteur = await context.Auteurs.FindAsync(id); 
         
@@ -46,8 +46,9 @@ public static class AuteurEndpoints
         {
             return Results.BadRequest();
         }
-
-        context.Entry(auteur).State = EntityState.Modified;
+        
+        auteur.FirstName = request.FirstName ?? auteur.FirstName;
+        auteur.LastName = request.LastName ?? auteur.LastName;
 
         if (await AuteurExists(context, id))
         {
