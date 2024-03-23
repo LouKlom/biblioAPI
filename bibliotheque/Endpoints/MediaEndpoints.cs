@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using bibliotheque.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
@@ -8,120 +10,136 @@ public static class MediaEndpoints
 {
     public static void MapMedia(this IEndpointRouteBuilder app)
     {
-        //Get All Media
-        app.MapGet("/api/medias", async (ApiContext context) =>
-            {
-                return await context.Medias
-                    .Include(m => m.Auteur)
-                    .ToListAsync();
-            })
+        app.MapGet("/api/medias", GetAllMedias)
             .WithTags("Medias");
 
-        //Get Media by id
-        app.MapGet("/api/medias/{id}", async (ApiContext context, int id) =>
-            {
-                var media = await context.Medias
-                    .Include(m => m.Auteur)
-                    .FirstOrDefaultAsync();
-                
-                if (media == null)
-                {
-                    return Results.NotFound();
-                }
-
-                return Results.Ok(media);
-            })
+        app.MapGet("/api/medias/{id}", GetMediaById)
             .WithTags("Medias");
 
-        //Get Media by Auteur
-        app.MapGet("/api/medias/auteur/{auteurId}", async (ApiContext context, int auteurId) =>
-        {
-            if (AuteurExists(context, auteurId))
-            {
-                var medias = await context.Medias
-                    .Include(m => m.Auteur)
-                    .Where(m => m.Auteur.Id == auteurId).ToListAsync();
-                
-                if (medias.Count == 0)
-                {
-                    return Results.NoContent();
-                }
-
-                return Results.Ok(medias);
-            }
-
-            return Results.NotFound();
-        }).WithTags("Medias");
-
-        //Update Media by Id 
-        app.MapPut("/api/medias/{id}", async (ApiContext context, int id, Media media) =>
-            {
-                if (id != media.Id)
-                {
-                    return Results.BadRequest();
-                }
-
-                context.Entry(media).State = EntityState.Modified;
-
-                if (MediaExists(context, id))
-                {
-                    await context.SaveChangesAsync();
-                    return Results.NoContent();
-                }
-
-                return Results.NotFound();
-            })
+        app.MapGet("/api/medias/auteur/{auteurId}", GetMediaByAuteur)
             .WithTags("Medias");
 
-        //Add Media
-        app.MapPost("/api/medias", async (ApiContext context, MediaRequest media) =>
-            {
-                //On verifie que l'auteur existe
-                var auteur = context.Auteurs.FirstOrDefault(a => a.Id == media.AuteurId);
-                if (auteur != null)
-                {
-                    media.AuteurId = auteur.Id;
-                    var mediaToAdd = new Media
-                    {
-                        Description = media.Description,
-                        Edition = media.Edition,
-                        Name = media.Name,
-                        Reserved = media.Reserved.Value,
-                        Auteur = auteur
-                    };
-                    
-                    await context.AddAsync(mediaToAdd);
-                    await context.SaveChangesAsync();
-                    return Results.NoContent();
-                }
-                return Results.NotFound();
-            })
+        app.MapPut("/api/medias/{id}", UpdateMediaById)
+            .WithTags("Medias");
+
+        app.MapPost("/api/medias", CreateMedia)
             .WithTags("Medias");
 
         //Delete Media by Id
-        app.MapDelete("/api/medias/{id}", async (ApiContext context, int id) =>
-            {
-                var media = await context.Medias.FindAsync(id);
-                if (media == null)
-                {
-                    return Results.NotFound();
-                }
-
-                context.Medias.Remove(media);
-                await context.SaveChangesAsync();
-
-                return Results.Ok();
-            })
+        app.MapDelete("/api/medias/{id}", DeleteMedia)
             .WithTags("Medias");
+    }
 
-        bool MediaExists(ApiContext context, int id)
+    private static async Task<IResult> GetAllMedias(ApiContext context)
+    {
+        return Results.Ok(await context.Medias
+            .Include(m => m.Auteur)
+            .ToListAsync());
+    }
+
+    private static async Task<IResult> GetMediaById(ApiContext context, int id)
+    {
+        var media = await context.Medias
+            .Include(m => m.Auteur)
+            .FirstOrDefaultAsync();
+                
+        if (media == null)
         {
-            return context.Medias.Any(e => e.Id == id);
+            return Results.NotFound();
+        }
+
+        return Results.Ok(media);
+    }
+
+    private static async Task<IResult> GetMediaByAuteur(ApiContext context, int auteurId)
+    {
+        if (await AuteurExists(context, auteurId))
+        {
+            var medias = await context.Medias
+                .Include(m => m.Auteur)
+                .Where(m => m.Auteur.Id == auteurId).ToListAsync();
+                
+            if (medias.Count == 0)
+            {
+                return Results.NoContent();
+            }
+
+            return Results.Ok(medias);
+        }
+
+        return Results.NotFound();
+    }
+
+    private static async Task<IResult> UpdateMediaById(ApiContext context, MediaRequest request, int id)
+    {
+        var media = await context.Medias.FindAsync(id); 
+            
+        if (media == null)
+        {
+            return Results.BadRequest();
         }
         
-        bool AuteurExists(ApiContext context, int id)
+        var auteur = context.Auteurs.FirstOrDefault(a => a.Id == request.AuteurId);
+        
+        media.Name = request.Name ?? media.Name;
+        media.Description = request.Description ?? media.Description;
+        media.Reserved = request.Reserved ?? media.Reserved;
+        media.Auteur = auteur ?? media.Auteur;
+        media.Edition = request.Edition ?? media.Edition;
+        media.DateSortie = request.DateSortie ?? media.DateSortie;
+
+        if (await MediaExists(context, id))
         {
-            return context.Auteurs.Any(e => e.Id == id);
+            await context.SaveChangesAsync();
+            return Results.NoContent();
         }
-    } 
+
+        return Results.NotFound();
+    }
+
+    private static async Task<IResult> CreateMedia(ApiContext context, MediaRequest request)
+    {
+        var auteur = context.Auteurs.FirstOrDefault(a => a.Id == request.AuteurId);
+        
+        if (auteur != null)
+        {
+            request.AuteurId = auteur.Id;
+            var mediaToAdd = new Media
+            {
+                Description = request.Description,
+                Edition = request.Edition,
+                Name = request.Name,
+                Reserved = request.Reserved.Value,
+                Auteur = auteur
+            };
+            await context.AddAsync(mediaToAdd);
+            await context.SaveChangesAsync();
+            return Results.NoContent();
+        }
+        return Results.NotFound();
+    }
+
+    private static async Task<IResult> DeleteMedia(ApiContext context, int id)
+    {
+        var media = await context.Medias.FindAsync(id);
+        if (media == null)
+        {
+            return Results.NotFound();
+        }
+        
+        context.Medias.Remove(media);
+        await context.SaveChangesAsync();
+        
+        return Results.Ok();
+    }
+    
+    private static async Task<bool> MediaExists(ApiContext context, int id)
+    {
+        return await context.Medias.AnyAsync(e => e.Id == id);
+    }
+        
+    private static async Task<bool> AuteurExists(ApiContext context, int id)
+    {
+        return await context.Auteurs.AnyAsync(e => e.Id == id);
+    }
 }
