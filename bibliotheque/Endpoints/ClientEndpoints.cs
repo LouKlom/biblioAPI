@@ -16,26 +16,10 @@ public static class ClientEndpoints
         app.MapGet("/api/Clients/{id}", GetClientById)
             .WithTags("Clients");
 
-        app.MapPut("/api/Clients/{id}", async (ApiContext context, int id, Client client) =>
-            {
-                if (id != client.Id)
-                {
-                    return Results.BadRequest();
-                }
-
-                context.Entry(client).State = EntityState.Modified;
-
-                if (await ClientExists(context, id))
-                {
-                    await context.SaveChangesAsync();
-                    return Results.NoContent();
-                }
-
-                return Results.NotFound();
-            })
+        app.MapPut("/api/Clients/{id}", PutClient)
             .WithTags("Clients");
 
-        app.MapPost("/api/Clients", PutClient)
+        app.MapPost("/api/Clients", CreateClient)
             .WithTags("Clients");
 
         app.MapDelete("/api/Clients/{id}", DeleteClient)
@@ -53,6 +37,29 @@ public static class ClientEndpoints
             is Client client
             ? TypedResults.Ok(client)
             : TypedResults.NotFound();
+    }
+
+    private static async Task<IResult> CreateClient(ApiContext context, ClientRequest client)
+    {
+        if (!Regex.IsMatch(client.Phone, PhoneValidator.PhoneRegex))
+        {
+            return Results.BadRequest("Le numéro de téléphone n'est pas au bon format");
+        }
+
+        if (!Regex.IsMatch(client.Mail, EmailValidator.EmailRegex))
+        {
+            return Results.BadRequest("L'adresse mail n'est pas au bon format");
+        }
+
+        if (await FindByNameOrMailAsync(context, client.Name, client.Mail))
+        {
+            return Results.BadRequest("Le nom ou l'adresse mail est déjà utilisée");
+        }
+                
+        var clientToAdd = new Client { Name = client.Name, Mail = client.Mail, Phone = client.Phone };
+        await context.AddAsync(clientToAdd);
+        await context.SaveChangesAsync();
+        return Results.NoContent();
     }
     
     private static async Task<IResult> PutClient(ApiContext context, int id, ClientRequest request)
