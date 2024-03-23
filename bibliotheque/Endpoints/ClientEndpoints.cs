@@ -16,7 +16,7 @@ public static class ClientEndpoints
         app.MapGet("/api/Clients/{id}", GetClientById)
             .WithTags("Clients");
 
-        app.MapPut("/api/Clients/{id}", PutClient)
+        app.MapPut("/api/Clients/{id}", UpdateClient)
             .WithTags("Clients");
 
         app.MapPost("/api/Clients", CreateClient)
@@ -41,12 +41,12 @@ public static class ClientEndpoints
 
     private static async Task<IResult> CreateClient(ApiContext context, ClientRequest client)
     {
-        if (!Regex.IsMatch(client.Phone, PhoneValidator.PhoneRegex))
+        if (!await IsPhoneValid(client.Phone))
         {
             return Results.BadRequest("Le numéro de téléphone n'est pas au bon format");
         }
 
-        if (!Regex.IsMatch(client.Mail, EmailValidator.EmailRegex))
+        if (!await IsEmailValid(client.Mail))
         {
             return Results.BadRequest("L'adresse mail n'est pas au bon format");
         }
@@ -62,7 +62,7 @@ public static class ClientEndpoints
         return Results.NoContent();
     }
     
-    private static async Task<IResult> PutClient(ApiContext context, int id, ClientRequest request)
+    private static async Task<IResult> UpdateClient(ApiContext context, int id, ClientRequest request)
     {
         var client = await context.Clients.FindAsync(id); 
         
@@ -71,10 +71,22 @@ public static class ClientEndpoints
             return Results.BadRequest();
         }
 
-        context.Entry(request).State = EntityState.Modified;
+        client.Name = request.Name ?? client.Name;
+        client.Mail = request.Mail ?? client.Mail;
+        client.Phone = request.Phone ?? client.Phone;
 
         if (await ClientExists(context, id))
         {
+            
+            if (!await IsPhoneValid(client.Phone))
+            {
+                return Results.BadRequest("Le numéro de téléphone n'est pas au bon format");
+            }
+
+            if (!await IsEmailValid(client.Mail))
+            {
+                return Results.BadRequest("L'adresse mail n'est pas au bon format");
+            }
             if (await FindByNameOrMailAsync(context, request.Name, request.Mail))
             {
                 return Results.BadRequest("Le nom ou l'adresse mail est déjà utilisée");
@@ -109,5 +121,15 @@ public static class ClientEndpoints
     {
         return await context.Clients
             .AnyAsync(c => c.Name == name || c.Mail == mail);
+    }
+    
+    private static async Task<bool> IsPhoneValid(string phone)
+    {
+        return Regex.IsMatch(phone, PhoneValidator.PhoneRegex);
+    }
+
+    private static async Task<bool> IsEmailValid(string email)
+    {
+        return Regex.IsMatch(email, EmailValidator.EmailRegex);
     }
 }
