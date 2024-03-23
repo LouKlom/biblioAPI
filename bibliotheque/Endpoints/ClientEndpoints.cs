@@ -71,7 +71,7 @@ public static class ClientEndpoints
             return Results.BadRequest();
         }
 
-        context.Entry(client).State = EntityState.Modified;
+        context.Entry(request).State = EntityState.Modified;
 
         if (await ClientExists(context, id))
         {
