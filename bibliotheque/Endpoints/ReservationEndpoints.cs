@@ -113,7 +113,7 @@ public static class ReservationEndpoints
     {
         var reservation = await context.Reservations
             .Include(r => r.Media)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(r => r.Id == id);
 
         if (reservation == null)
         {
