@@ -7,6 +7,6 @@
         public Media Media { get; set; }
         public DateTime DateDebut { get; set; }
         public DateTime? DateFin { get; set; }
-        public bool Rendu { get; set; }
+        public bool? Rendu { get; set; }
     }
 }

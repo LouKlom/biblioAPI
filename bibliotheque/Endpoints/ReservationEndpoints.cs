@@ -20,7 +20,7 @@ public static class ReservationEndpoints
         app.MapGet("/api/reservations/{dateDebut}/{dateFin}", GetReservationByDate)
             .WithTags("Reservations");
 
-        app.MapPut("/api/reservations/{id}", UpdateReservation)
+        app.MapPatch("/api/reservations/{id}", UpdateReservation)
             .WithTags("Reservations");
         
         app.MapPut("/api/reservations/{id}/rendu", UpdateReservationRendu)
@@ -39,7 +39,6 @@ public static class ReservationEndpoints
             .Include(r => r.Client)
             .Include(r => r.Media)
             .Include(r => r.Media.Auteur)
-            .Select(m => m.Media.Id)
             .ToListAsync());
     }
 
@@ -151,7 +150,8 @@ public static class ReservationEndpoints
                 Client = client,
                 Media = media,
                 DateDebut = DateTime.Now,
-                DateFin = DateTime.Now.AddDays(+ 15)
+                DateFin = DateTime.Now.AddDays(+ 15),
+                Rendu = false
             };
 
         await context.AddAsync(reservationToAdd);
