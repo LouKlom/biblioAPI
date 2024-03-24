@@ -22,6 +22,9 @@ public static class ReservationEndpoints
 
         app.MapPut("/api/reservations/{id}", UpdateReservation)
             .WithTags("Reservations");
+        
+        app.MapPut("/api/reservations/{id}", UpdateReservationRendu)
+            .WithTags("Reservations");
 
         app.MapPost("/api/reservations", CreateReservation)
             .WithTags("Reservations");
@@ -36,6 +39,7 @@ public static class ReservationEndpoints
             .Include(r => r.Client)
             .Include(r => r.Media)
             .Include(r => r.Media.Auteur)
+            .Select(m => m.Media.Id)
             .ToListAsync());
     }
 
@@ -101,20 +105,33 @@ public static class ReservationEndpoints
         reservation.DateDebut = request.DateDebut ?? reservation.DateDebut;
         reservation.DateFin = request.DateFin ?? reservation.DateFin;
 
-        if (await ReservationExists(context, id))
+        await context.SaveChangesAsync();
+        return Results.NoContent();
+    }
+    
+    
+    private static async Task<IResult> UpdateReservationRendu(ApiContext context, int id)
+    {
+        var reservation = await context.Reservations.FindAsync(id);
+
+        if (reservation == null)
         {
-            await context.SaveChangesAsync();
-            return Results.NoContent();
+            return Results.NotFound();
         }
 
-        return Results.NotFound();
+        var media = context.Medias.FirstOrDefault(m => m.Id == reservation.Media.Id);
+
+        media.Reserved = false;
+        reservation.Rendu = true;
+        await context.SaveChangesAsync();
+        return Results.NoContent();
     }
 
     private static async Task<IResult> CreateReservation(ApiContext context, ReservationRequest request)
     {
         if (await IsMediaReserved(context, request.MediaId.Value))
         {
-            return Results.BadRequest();
+            return Results.BadRequest("Le média est déjà reservé");
         }
         
         var media = context.Medias.FirstOrDefault(m => m.Id == request.MediaId);
