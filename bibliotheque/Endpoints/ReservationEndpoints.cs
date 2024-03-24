@@ -133,7 +133,7 @@ public static class ReservationEndpoints
             {
                 Client = client,
                 Media = media,
-                DateDebut = request.DateDebut.Value,
+                DateDebut = DateTime.Now,
                 DateFin = DateTime.Now.AddDays(+ 15)
             };
 
