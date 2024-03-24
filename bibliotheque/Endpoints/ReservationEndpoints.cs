@@ -1,9 +1,6 @@
 using bibliotheque.Models;
 using bibliotheque.Requests;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace bibliotheque.Endpoints;
 
@@ -11,151 +8,171 @@ public static class ReservationEndpoints
 {
     public static void MapReservation(this IEndpointRouteBuilder app)
     {
-        //Get All Reservations
-        app.MapGet("/api/reservations", async (ApiContext context) => await context.Reservations
-                .Include(r => r.Client)
-                .Include(r => r.Media)
-                .Include(r => r.Media.Auteur)
-                .ToListAsync())
+        app.MapGet("/api/reservations", GetAllReservations)
             .WithTags("Reservations");
 
-        //Get Reservation by Id
-        app.MapGet("/api/reservations/{id}", async (ApiContext context, int id) =>
-            {
-                var reservation = await context.Reservations
-                    .Include(r => r.Client)
-                    .Include(r => r.Media)
-                    .Include(r => r.Media.Auteur)
-                    .FirstOrDefaultAsync();
-                
-                if (reservation == null)
-                {
-                    return Results.NotFound();
-                }
-
-                return Results.Ok(reservation);
-            })
+        app.MapGet("/api/reservations/{id}", GetReservationById)
             .WithTags("Reservations");
 
-        //Get Reservation by clientId
-        app.MapGet("/api/reservations/client/{clientId}", async (ApiContext context, int clientId) =>
+        app.MapGet("/api/reservations/client/{clientId}", GetReservationByClientId)
+            .WithTags("Reservations");
+
+        app.MapGet("/api/reservations/{dateDebut}/{dateFin}", GetReservationByDate)
+            .WithTags("Reservations");
+
+        app.MapPut("/api/reservations/{id}", UpdateReservation)
+            .WithTags("Reservations");
+
+        app.MapPost("/api/reservations", CreateReservation)
+            .WithTags("Reservations");
+
+        app.MapDelete("/api/reservations/{id}", DeleteReservation)
+            .WithTags("Reservations");
+    }
+
+    private static async Task<IResult> GetAllReservations(ApiContext context)
+    {
+        return Results.Ok(await context.Reservations
+            .Include(r => r.Client)
+            .Include(r => r.Media)
+            .Include(r => r.Media.Auteur)
+            .ToListAsync());
+    }
+
+    private static async Task<IResult> GetReservationById(ApiContext context, int id)
+    {
+        var reservation = await context.Reservations
+            .Include(r => r.Client)
+            .Include(r => r.Media)
+            .Include(r => r.Media.Auteur)
+            .FirstOrDefaultAsync(r => r.Id == id);
+
+        if (reservation == null)
         {
-            if (ClientExists(context, clientId))
-            {
-                var reservations = await context.Reservations
-                    .Include(r => r.Client)
-                    .Include(r => r.Media)
-                    .Include(r => r.Media.Auteur)
-                    .Where(r => r.Client.Id == clientId).ToListAsync();
-                
-                if (reservations.Count == 0)
-                {
-                    return Results.NotFound();
-                }
-
-                return Results.Ok(reservations);
-            }
             return Results.NotFound();
-        }).WithTags("Reservations");
+        }
 
-        //Get Reservation by Date
-        app.MapGet("/api/reservations/{dateDebut}/{dateFin}", async (ApiContext context, DateTime dateDebut, DateTime dateFin) =>
+        return Results.Ok(reservation);
+    }
+
+    private static async Task<IResult> GetReservationByClientId(ApiContext context, int clientId)
+    {
+        if (!await ClientExists(context, clientId))
         {
-            var reservations = await context.Reservations
-                .Include(r => r.Client)
-                .Include(r => r.Media)
-                .Include(r => r.Media.Auteur)
-                .Where(r => r.DateDebut >= dateDebut && r.DateDebut <= dateFin).ToListAsync();
-            return Results.Ok(reservations);
-        }).WithTags("Reservations");
+            return Results.NotFound();
+        }
 
-        //Update Reservation by Id
-        app.MapPut("/api/reservations/{id}", async (ApiContext context, int id, Reservation reservation) =>
-            {
-                if (id != reservation.Id)
-                {
-                    return Results.BadRequest("Les id ne correspondent pas ");
-                }
+        var reservations = await context.Reservations
+            .Include(r => r.Client)
+            .Include(r => r.Media)
+            .Include(r => r.Media.Auteur)
+            .Where(r => r.Client.Id == clientId)
+            .ToListAsync();
 
-                context.Entry(reservation).State = EntityState.Modified;
+        return Results.Ok(reservations);
+    }
 
-                if (ReservationExists(context, id))
-                {
-                    await context.SaveChangesAsync();
-                    return Results.NoContent();
-                }
+    private static async Task<IResult> GetReservationByDate(ApiContext context, DateTime dateDebut, DateTime dateFin)
+    {
+        var reservations = await context.Reservations
+            .Include(r => r.Client)
+            .Include(r => r.Media)
+            .Include(r => r.Media.Auteur)
+            .Where(r => r.DateDebut >= dateDebut && r.DateFin <= dateFin)
+            .ToListAsync();
 
-                return Results.NotFound();
-            })
-            .WithTags("Reservations");
+        return Results.Ok(reservations);
+    }
 
-        //Add a Reservation
-        app.MapPost("/api/reservations", async (ApiContext context, ReservationRequest reservation) =>
-            {
-                //Check if media is reserved 
-                if (!( await MediaReserved(context, reservation.MediaId.Value)))
-                {
-                    //Create Media
-                    var media = await context.Medias.FirstOrDefaultAsync(x => x.Id == reservation.MediaId);
-                    var client = await context.Clients.FirstOrDefaultAsync(x => x.Id == reservation.ClientId);
-                    if (media != null && client != null)
-                    {
-                        reservation.MediaId = media.Id;
-                        reservation.ClientId = client.Id;
-                        var reservationToAdd =
-                            new Reservation
-                            {
-                                Client = client, 
-                                Media = media, 
-                                DateDebut = reservation.DateDebut.Value
-                            };
-                
-                        await context.AddAsync(reservationToAdd);
-                        await context.SaveChangesAsync();
-                        //Update Media.reserved + DateDeSortie
-                        return Results.NoContent();
-                    }
-                    return Results.NotFound();
-                }
-                return Results.BadRequest("Le Media est déjà reservé");
-            })
-            .WithTags("Reservations");
+    private static async Task<IResult> UpdateReservation(ApiContext context, int id, ReservationRequest request)
+    {
+        var reservation = await context.Reservations.FindAsync(id);
 
-        //Delete a Reservation
-        app.MapDelete("/api/reservations/{id}", async (ApiContext context, int id) =>
-            {
-                var reservation = await context.Reservations.FindAsync(id);
-                if (reservation == null)
-                {
-                    return Results.NotFound();
-                }
-
-                context.Reservations.Remove(reservation);
-                await context.SaveChangesAsync();
-
-                return Results.Ok();
-            })
-            .WithTags("Reservations");
-
-        bool ReservationExists(ApiContext context, int id)
+        if (reservation == null)
         {
-            return context.Reservations.Any(e => e.Id == id);
+            return Results.NotFound();
+        }
+
+        var client = context.Clients.FirstOrDefault(c => c.Id == request.ClientId);
+        var media = context.Medias.Include(media => media.Auteur).FirstOrDefault(m => m.Id == request.MediaId);
+
+        reservation.Client = client ?? reservation.Client;
+        reservation.Media = media ?? reservation.Media;
+        reservation.DateDebut = request.DateDebut ?? reservation.DateDebut;
+        reservation.DateFin = request.DateFin ?? reservation.DateFin;
+
+        if (await ReservationExists(context, id))
+        {
+            await context.SaveChangesAsync();
+            return Results.NoContent();
+        }
+
+        return Results.NotFound();
+    }
+
+    private static async Task<IResult> CreateReservation(ApiContext context, ReservationRequest request)
+    {
+        if (await IsMediaReserved(context, request.MediaId.Value))
+        {
+            return Results.BadRequest();
         }
         
-        bool ClientExists(ApiContext context, int id)
-        {
-            return context.Clients.Any(e => e.Id == id);
-        }
+        var media = context.Medias.FirstOrDefault(m => m.Id == request.MediaId);
+        var client = await context.Clients.FirstOrDefaultAsync(x => x.Id == request.ClientId);
         
-        bool MediaExists(ApiContext context, int id)
+        if (media == null || client == null)
         {
-            return context.Medias.Any(e => e.Id == id);
+            return Results.NotFound("Le media ou le client renseigné n'a pas été trouvé");
+        }
+            
+        request.MediaId = media.Id;
+        request.ClientId = client.Id;
+        media.Reserved = true;
+        var reservationToAdd =
+            new Reservation
+            {
+                Client = client,
+                Media = media,
+                DateDebut = request.DateDebut.Value,
+                DateFin = DateTime.Now.AddDays(+ 15)
+            };
+
+        await context.AddAsync(reservationToAdd);
+        await context.SaveChangesAsync();
+        return Results.NoContent();
+    }
+
+    private static async Task<IResult> DeleteReservation(ApiContext context, int id)
+    {
+        var reservation = await context.Reservations.FindAsync(id);
+        if (reservation == null)
+        {
+            return Results.NotFound();
         }
 
-        async Task<bool> MediaReserved(ApiContext context, int id)
-        {
-            var media = await context.Medias.FindAsync(id);
-            return media.Reserved;
-        }
-    } 
+        context.Reservations.Remove(reservation);
+        await context.SaveChangesAsync();
+
+        return Results.NoContent();
+    }
+
+    private static async Task<bool> ReservationExists(ApiContext context, int id)
+    {
+        return await context.Reservations.AnyAsync(e => e.Id == id);
+    }
+        
+    private static async Task<bool> ClientExists(ApiContext context, int id)
+    {
+        return await context.Clients.AnyAsync(e => e.Id == id);
+    }
+        
+    private static async Task<bool> MediaExists(ApiContext context, int id)
+    {
+        return await context.Medias.AnyAsync(e => e.Id == id);
+    }
+
+    private static async Task<bool> IsMediaReserved(ApiContext context, int id)
+    {
+        return await context.Medias.AnyAsync(m => m.Id == id && m.Reserved);
+    }
 }

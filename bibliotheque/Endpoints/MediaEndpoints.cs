@@ -109,7 +109,7 @@ public static class MediaEndpoints
                 Description = request.Description,
                 Edition = request.Edition,
                 Name = request.Name,
-                Reserved = request.Reserved.Value,
+                Reserved = false,
                 Auteur = auteur
             };
             await context.AddAsync(mediaToAdd);
