@@ -122,6 +122,7 @@ public static class ReservationEndpoints
 
         reservation.Media.Reserved = false;
         reservation.Rendu = true;
+        reservation.DateFin = DateTime.Now;
         await context.SaveChangesAsync();
         return Results.NoContent();
     }
