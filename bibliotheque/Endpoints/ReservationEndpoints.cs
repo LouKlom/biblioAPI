@@ -23,7 +23,7 @@ public static class ReservationEndpoints
         app.MapPut("/api/reservations/{id}", UpdateReservation)
             .WithTags("Reservations");
         
-        app.MapPut("/api/reservations/{id}", UpdateReservationRendu)
+        app.MapPut("/api/reservations/{id}/rendu", UpdateReservationRendu)
             .WithTags("Reservations");
 
         app.MapPost("/api/reservations", CreateReservation)
