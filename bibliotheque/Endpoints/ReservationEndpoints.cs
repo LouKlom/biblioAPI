@@ -20,7 +20,7 @@ public static class ReservationEndpoints
         app.MapGet("/api/reservations/{dateDebut}/{dateFin}", GetReservationByDate)
             .WithTags("Reservations");
 
-        app.MapPatch("/api/reservations/{id}", UpdateReservation)
+        app.MapPut("/api/reservations/{id}", UpdateReservation)
             .WithTags("Reservations");
         
         app.MapPut("/api/reservations/{id}/rendu", UpdateReservationRendu)
