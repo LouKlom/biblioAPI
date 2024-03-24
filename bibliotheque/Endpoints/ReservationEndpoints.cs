@@ -111,16 +111,16 @@ public static class ReservationEndpoints
     
     private static async Task<IResult> UpdateReservationRendu(ApiContext context, int id)
     {
-        var reservation = await context.Reservations.FindAsync(id);
+        var reservation = await context.Reservations
+            .Include(r => r.Media)
+            .FirstOrDefaultAsync();
 
         if (reservation == null)
         {
             return Results.NotFound();
         }
 
-        var media = context.Medias.FirstOrDefault(m => m.Id == reservation.Media.Id);
-
-        media.Reserved = false;
+        reservation.Media.Reserved = false;
         reservation.Rendu = true;
         await context.SaveChangesAsync();
         return Results.NoContent();
