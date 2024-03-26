@@ -174,21 +174,11 @@ public static class ReservationEndpoints
         return Results.NoContent();
     }
 
-    private static async Task<bool> ReservationExists(ApiContext context, int id)
-    {
-        return await context.Reservations.AnyAsync(e => e.Id == id);
-    }
-        
     private static async Task<bool> ClientExists(ApiContext context, int id)
     {
         return await context.Clients.AnyAsync(e => e.Id == id);
     }
         
-    private static async Task<bool> MediaExists(ApiContext context, int id)
-    {
-        return await context.Medias.AnyAsync(e => e.Id == id);
-    }
-
     private static async Task<bool> IsMediaReserved(ApiContext context, int id)
     {
         return await context.Medias.AnyAsync(m => m.Id == id && m.Reserved);

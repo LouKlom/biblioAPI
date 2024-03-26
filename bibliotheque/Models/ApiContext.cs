@@ -13,7 +13,7 @@ public class ApiContext : DbContext
     {
         modelBuilder.Entity<Client>()
             .HasIndex(p => new { p.Name, p.Mail })
-            .IsUnique(true);
+            .IsUnique();
     }
 
     public DbSet<Auteur> Auteurs { get; set; } = null!;
